@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1d4ed8">
+<title>امتحان ریاضی شهرستان دزپارت</title>
+<style>
+*{box-sizing:border-box}
+:root{--primary:#1d4ed8;--primary2:#2563eb;--bg:#f3f6fb;--card:#fff;--text:#172033;--muted:#64748b;--danger:#dc2626;--success:#15803d;--border:#dbe3ef}
+body{margin:0;font-family:Tahoma,"Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#eef4ff,#f8fafc);color:var(--text);min-height:100vh}
+button,input,textarea{font:inherit}
+button{cursor:pointer;border:0}
+.hidden{display:none!important}
+.app{width:min(100%,1050px);margin:auto;padding:18px}
+header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;border-radius:22px;padding:24px;text-align:center;box-shadow:0 12px 35px #1e3a8a22;margin-bottom:18px}
+header h1{margin:0 0 8px;font-size:clamp(22px,4vw,34px)}
+header p{margin:0;opacity:.9}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:0 8px 30px #0f172a0d;margin-bottom:18px}
+h2,h3{margin-top:0}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+label{display:block;font-weight:700;margin-bottom:7px}
+input,textarea{width:100%;border:2px solid var(--border);border-radius:12px;padding:12px 13px;outline:none;background:#fff}
+input:focus,textarea:focus{border-color:var(--primary)}
+textarea{min-height:150px;resize:vertical;line-height:1.8}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.btn{padding:12px 18px;border-radius:12px;font-weight:700;min-height:48px}
+.primary{background:var(--primary);color:#fff}.primary:hover{background:#1e40af}
+.secondary{background:#e8eefb;color:#173b8f}.danger{background:#fee2e2;color:#991b1b}.success{background:#dcfce7;color:#166534}
+.outline{background:#fff;color:var(--primary);border:2px solid #bfdbfe}
+.error{color:var(--danger);font-weight:700;margin-top:10px}.hint{color:var(--muted);font-size:14px;line-height:1.8}
+.exam-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.timer{font-size:22px;font-weight:900;color:#991b1b;background:#fee2e2;border-radius:12px;padding:10px 16px}
+.progress{height:10px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin:10px 0 22px}
+.progress>div{height:100%;background:var(--primary);transition:width .2s}
+.question-title{font-size:21px;line-height:1.9;font-weight:800;margin-bottom:18px}
+.options{display:grid;gap:12px}
+.option{display:flex;align-items:center;gap:10px;border:2px solid var(--border);border-radius:14px;padding:14px;min-height:54px;transition:.15s}
+.option:hover{border-color:#93c5fd;background:#eff6ff}
+.option input{width:auto;transform:scale(1.25)}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
+.counter{font-weight:800;color:var(--muted)}
+.file-label{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border-radius:12px;background:#e8eefb;color:#173b8f;font-weight:700;cursor:pointer;min-height:48px}
+.file-label input{display:none}
+.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:#f8fafc;border:1px solid var(--border);border-radius:14px;padding:14px}.stat b{display:block;font-size:18px;margin-top:5px}
+.student-answer{background:#f8fafc;border:1px solid var(--border);border-radius:14px;padding:16px;margin:12px 0}
+.student-answer img{max-width:100%;max-height:300px;display:block;border-radius:10px;margin-top:12px;border:1px solid var(--border)}
+.teacher-row{border:1px solid var(--border);border-radius:16px;padding:16px;margin:12px 0;background:#fff}
+.teacher-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.badge{display:inline-block;padding:5px 10px;border-radius:999px;background:#e0f2fe;color:#075985;font-size:13px;font-weight:700}
+.score-input{max-width:160px}
+.modal{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;padding:18px;z-index:20}
+.modal-box{background:#fff;border-radius:20px;padding:24px;width:min(100%,430px);box-shadow:0 20px 60px #0004}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:12px 18px;border-radius:12px;z-index:30;max-width:90%;text-align:center}
+.small{font-size:13px;color:var(--muted)}
+hr{border:0;border-top:1px solid var(--border);margin:20px 0}
+@media(max-width:750px){
+ .app{padding:10px}.card{padding:17px;border-radius:16px}
+ .form-grid{grid-template-columns:1fr}
+ .result-grid{grid-template-columns:repeat(2,1fr)}
+ .exam-top{align-items:stretch}.timer{width:100%;text-align:center}
+ .question-title{font-size:18px}.nav .btn{flex:1}
+ header{border-radius:16px;padding:19px}
+}
+@media(max-width:420px){
+ .result-grid{grid-template-columns:1fr}
+ .actions .btn,.file-label{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<h1>امتحان ریاضی شهرستان دزپارت</h1>
+<p>آزمون آنلاین — ۵ پرسش</p>
+</header>
+
+<section id="home" class="card">
+<h2>ورود دانش‌آموز</h2>
+<div class="form-grid">
+<div><label for="firstName">نام</label><input id="firstName" autocomplete="given-name"></div>
+<div><label for="lastName">نام خانوادگی</label><input id="lastName" autocomplete="family-name"></div>
+<div><label for="nationalId">کد ملی</label><input id="nationalId" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" autocomplete="off" placeholder="۱۰ رقم"></div>
+</div>
+<div id="loginError" class="error"></div>
+<div class="actions">
+<button class="btn primary" id="startBtn">شروع آزمون</button>
+<button class="btn outline" id="teacherBtn">ورود معلم</button>
+</div>
+<p class="hint">پاسخ‌ها به‌صورت خودکار در مرورگر ذخیره می‌شوند. هر کد ملی فقط یک‌بار اجازه ثبت نتیجه دارد.</p>
+</section>
+
+<section id="exam" class="card hidden">
+<div class="exam-top">
+<div class="counter" id="counter"></div>
+<div class="timer" id="timer">۶۰:۰۰</div>
+</div>
+<div class="progress"><div id="progressBar"></div></div>
+<div id="questionArea"></div>
+<div class="nav">
+<button class="btn secondary" id="prevBtn">پیشین</button>
+<button class="btn primary" id="nextBtn">پسین</button>
+</div>
+</section>
+
+<section id="finished" class="card hidden">
+<h2>آزمون پایان یافت</h2>
+<div id="finishSummary"></div>
+<div class="actions"><button class="btn primary" id="downloadResultBtn">دریافت فایل نتیجه</button></div>
+</section>
+
+<section id="teacher" class="card hidden">
+<div class="exam-top"><h2 style="margin:0">پنل معلم</h2><button class="btn danger" id="teacherLogout">خروج</button></div>
+<div class="actions">
+<label class="file-label">وارد کردن نتایج
+<input id="importResults" type="file" accept=".json,application/json" multiple>
+</label>
+<button class="btn primary" id="downloadAll">دانلود همه‌ی نتایج</button>
+</div>
+<p class="hint">نتایج ثبت‌شده در همین مرورگر و نتایج واردشده از فایل‌های JSON در این پنل نمایش داده می‌شوند.</p>
+<div id="teacherResults"></div>
+</section>
+</div>
+
+<div id="passwordModal" class="modal hidden">
+<div class="modal-box">
+<h3>ورود معلم</h3>
+<label for="teacherPasswordInput">رمز عبور</label>
+<input id="teacherPasswordInput" type="password" inputmode="numeric" autocomplete="off">
+<div id="passwordError" class="error"></div>
+<div class="actions">
+<button class="btn primary" id="passwordSubmit">ورود</button>
+<button class="btn secondary" id="passwordCancel">انصراف</button>
+</div>
+</div>
+</div>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+/*
+ * رمز ورود معلم:
+ * برای امنیت واقعی، این رمز را در سمت کاربر قابل مشاهده در نظر بگیرید؛
+ * این پروژه کاملاً استاتیک است و احراز هویت امن سمت سرور ندارد.
+ */
+const TEACHER_PASSWORD = "1234";
+
+const QUESTION_BANK = [
+ {id:1,type:"mcq",text:"زرده تخم مرغ سفید است یا هست؟",options:["هست","است","نیست","نمی‌دانم"],correct:"نیست"},
+ {id:2,type:"mcq",text:"پایتخت ایران کدام شهر است؟",options:["تهران","اهواز","کرج","اصفهان"],correct:"تهران"},
+ {id:3,type:"essay",text:"مقدار sin ۴۵ درجه را محاسبه کنید.",correct:"√۲/۲"},
+ {id:4,type:"essay",text:"مقدار cos ۴۵ درجه را محاسبه کنید.",correct:"√۲/۲"},
+ {id:5,type:"essay",text:"محیط مستطیلی به طول ۲ و عرض ۴ را محاسبه کنید.",correct:"۱۲"}
+];
+
+const KEYS = {
+ draft:"dezpart_math_exam_draft_v1",
+ results:"dezpart_math_exam_results_v1"
+};
+const EXAM_MINUTES = 60;
+let state = null;
+let timerHandle = null;
+
+const $ = id => document.getElementById(id);
+const faNum = n => String(n).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);
+const nowISO = () => new Date().toISOString();
+
+function toast(msg){
+ const t=$("toast"); t.textContent=msg; t.classList.remove("hidden");
+ setTimeout(()=>t.classList.add("hidden"),2600);
+}
+function normalizeDigits(s){
+ return String(s||"").replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));
+}
+function getResults(){
+ try{return JSON.parse(localStorage.getItem(KEYS.results)||"[]")}catch{return []}
+}
+function saveResults(arr){localStorage.setItem(KEYS.results,JSON.stringify(arr))}
+function validNationalId(id){
+ id=normalizeDigits(id).replace(/\D/g,"");
+ if(!/^\d{10}$/.test(id) || /^(\d)\1{9}$/.test(id)) return false;
+ let check=+id[9], sum=0;
+ for(let i=0;i<9;i++) sum += +id[i]*(10-i);
+ let r=sum%11;
+ return r<2 ? check===r : check===11-r;
+}
+function shuffle(arr){
+ const a=[...arr];
+ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+ return a;
+}
+function createExam(){
+ const questions=QUESTION_BANK.map(q=>({...q,options:q.options?shuffle(q.options):undefined}));
+ state={
+   student:{firstName:$("firstName").value.trim(),lastName:$("lastName").value.trim(),nationalId:normalizeDigits($("nationalId").value)},
+   questions,index:0,answers:{},images:{},startedAt:nowISO(),endsAt:Date.now()+EXAM_MINUTES*60000,finished:false
+ };
+ saveDraft(); renderQuestion(); updateTimer();
+ clearInterval(timerHandle); timerHandle=setInterval(updateTimer,1000);
+ $("home").classList.add("hidden"); $("exam").classList.remove("hidden"); $("finished").classList.add("hidden"); $("teacher").classList.add("hidden");
+}
+function saveDraft(){ if(state&&!state.finished) localStorage.setItem(KEYS.draft,JSON.stringify(state)); }
+function loadDraft(){
+ try{
+  const d=JSON.parse(localStorage.getItem(KEYS.draft)||"null");
+  if(d && d.student && d.questions && !d.finished && d.endsAt>Date.now()) return d;
+ }catch{}
+ return null;
+}
+function renderQuestion(){
+ const q=state.questions[state.index];
+ $("counter").textContent=`پرسش ${faNum(state.index+1)} از ${faNum(state.questions.length)}`;
+ $("progressBar").style.width=((state.index+1)/state.questions.length*100)+"%";
+ let html=`<div class="question-title">${q.text}</div>`;
+ if(q.type==="mcq"){
+   html+=`<div class="options">`;
+   q.options.forEach((op,i)=>{
+     const checked=state.answers[q.id]===op?"checked":"";
+     html+=`<label class="option"><input type="radio" name="q${q.id}" value="${escapeAttr(op)}" ${checked}> <span>${String.fromCharCode(0x627+i*1)} ) ${op}</span></label>`;
+   });
+   html+=`</div>`;
+ }else{
+   html+=`<label for="essay_${q.id}">پاسخ تشریحی</label><textarea id="essay_${q.id}" placeholder="پاسخ خود را بنویسید...">${escapeHtml(state.answers[q.id]||"")}</textarea>`;
+   html+=`<div class="actions"><label class="file-label">بارگذاری تصویر پاسخ<input type="file" id="image_${q.id}" accept="image/*"></label></div>`;
+   if(state.images[q.id]) html+=`<div class="small">تصویر انتخاب شده است.</div><img class="student-answer" style="padding:0" src="${state.images[q.id]}" alt="تصویر پاسخ">`;
+ }
+ $("questionArea").innerHTML=html;
+ $("prevBtn").disabled=state.index===0;
+ $("nextBtn").textContent=state.index===state.questions.length-1?"پایان آزمون":"پسین";
+ if(q.type==="mcq"){
+   document.querySelectorAll(`input[name="q${q.id}"]`).forEach(el=>el.addEventListener("change",()=>{state.answers[q.id]=el.value;saveDraft()}));
+ }else{
+   $("essay_"+q.id).addEventListener("input",e=>{state.answers[q.id]=e.target.value;saveDraft()});
+   $("image_"+q.id).addEventListener("change",e=>handleImage(e,q.id));
+ }
+}
+function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function escapeAttr(s){return escapeHtml(s)}
+function handleImage(e,qid){
+ const file=e.target.files[0]; if(!file)return;
+ if(!file.type.startsWith("image/")){toast("فقط فایل تصویری انتخاب کنید.");return}
+ if(file.size>4*1024*1024){toast("حجم تصویر باید حداکثر ۴ مگابایت باشد.");return}
+ const reader=new FileReader();
+ reader.onload=()=>{state.images[qid]=reader.result;saveDraft();renderQuestion()};
+ reader.readAsDataURL(file);
+}
+function updateTimer(){
+ if(!state)return;
+ const left=Math.max(0,state.endsAt-Date.now());
+ const sec=Math.ceil(left/1000);
+ $("timer").textContent=`${faNum(Math.floor(sec/60).toString().padStart(2,"0"))}:${faNum((sec%60).toString().padStart(2,"0"))}`;
+ if(left<=0){clearInterval(timerHandle);finishExam(true)}
+}
+function collectCurrent(){saveDraft()}
+function finishExam(auto=false){
+ if(!state||state.finished)return;
+ collectCurrent(); state.finished=true;
+ const mcqs=state.questions.filter(q=>q.type==="mcq");
+ let testScore=0;
+ mcqs.forEach(q=>{if(state.answers[q.id]===q.correct)testScore++});
+ const result={
+  resultId:"R-"+Date.now()+"-"+Math.random().toString(36).slice(2,8),
+  student:state.student,
+  startedAt:state.startedAt,
+  finishedAt:nowISO(),
+  finishReason:auto?"پایان خودکار به دلیل اتمام زمان":"پایان توسط دانش‌آموز",
+  testScore,testTotal:mcqs.length,
+  essayScore:null,essayTotal:state.questions.filter(q=>q.type==="essay").length,
+  gradingStatus:"در انتظار تصحیح تشریحی",
+  questions:state.questions.map(q=>({
+    id:q.id,type:q.type,text:q.text,
+    selectedAnswer:state.answers[q.id]||"",
+    correctAnswer:q.correct||"",
+    imageBase64:state.images[q.id]||null
+  }))
+ };
+ const arr=getResults().filter(r=>r.student?.nationalId!==result.student.nationalId);
+ arr.push(result);saveResults(arr);
+ localStorage.removeItem(KEYS.draft);
+ state=result;
+ $("exam").classList.add("hidden");$("finished").classList.remove("hidden");
+ $("finishSummary").innerHTML=`<div class="result-grid">
+ <div class="stat">نام و نام خانوادگی<b>${escapeHtml(result.student.firstName+" "+result.student.lastName)}</b></div>
+ <div class="stat">نمره تستی<b>${faNum(result.testScore)} از ${faNum(result.testTotal)}</b></div>
+ <div class="stat">تشریحی<b>در انتظار تصحیح</b></div>
+ <div class="stat">زمان اتمام<b>${new Date(result.finishedAt).toLocaleString("fa-IR")}</b></div>
+ </div><p class="hint">نتیجه ذخیره شد. فایل JSON را دریافت کنید و برای معلم ارسال کنید.</p>`;
+}
+function downloadJSON(filename,data){
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json;charset=utf-8"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function showHome(){ $("teacher").classList.add("hidden");$("finished").classList.add("hidden");$("exam").classList.add("hidden");$("home").classList.remove("hidden") }
+function openTeacher(){ $("passwordModal").classList.remove("hidden");$("teacherPasswordInput").value="";$("passwordError").textContent="";setTimeout(()=>$("teacherPasswordInput").focus(),50)}
+function loginTeacher(){
+ if($("teacherPasswordInput").value===TEACHER_PASSWORD){
+   $("passwordModal").classList.add("hidden");$("home").classList.add("hidden");$("teacher").classList.remove("hidden");renderTeacher();
+ }else $("passwordError").textContent="رمز عبور اشتباه است.";
+}
+function renderTeacher(){
+ const results=getResults();
+ if(!results.length){$("teacherResults").innerHTML="<p class='hint'>هنوز نتیجه‌ای ثبت نشده است.</p>";return}
+ $("teacherResults").innerHTML=results.map(r=>`
+ <div class="teacher-row">
+  <div class="teacher-head">
+   <div><strong>${escapeHtml(r.student.firstName+" "+r.student.lastName)}</strong><br><span class="small">کد ملی: ${escapeHtml(r.student.nationalId)}</span></div>
+   <span class="badge">${escapeHtml(r.gradingStatus||"در انتظار تصحیح")}</span>
+   <div><strong>تستی: ${faNum(r.testScore)}/${faNum(r.testTotal)}</strong><br><span class="small">${new Date(r.finishedAt).toLocaleString("fa-IR")}</span></div>
+  </div>
+  <hr>
+  <details>
+   <summary>مشاهده پاسخ‌های تشریحی و تصاویر</summary>
+   ${r.questions.filter(q=>q.type==="essay").map(q=>`
+    <div class="student-answer">
+     <strong>${escapeHtml(q.text)}</strong>
+     <p>پاسخ دانش‌آموز: ${escapeHtml(q.selectedAnswer)||"<em>بدون پاسخ</em>"}</p>
+     ${q.imageBase64?`<img src="${q.imageBase64}" alt="تصویر پاسخ">`:""}
+     <label>نمره این سؤال</label>
+     <input class="score-input essay-score" type="number" min="0" step="0.25" value="${r.essayGrades?.[q.id]??""}" data-rid="${escapeAttr(r.resultId)}" data-qid="${q.id}">
+    </div>`).join("")}
+   <button class="btn success save-grade" data-rid="${escapeAttr(r.resultId)}">ذخیره نمره تشریحی</button>
+  </details>
+ </div>`).join("");
+ document.querySelectorAll(".save-grade").forEach(btn=>btn.addEventListener("click",()=>saveGrades(btn.dataset.rid)));
+}
+function saveGrades(rid){
+ const results=getResults();const r=results.find(x=>x.resultId===rid);if(!r)return;
+ const grades={};let total=0;let count=0;
+ document.querySelectorAll(`.essay-score[data-rid="${CSS.escape(rid)}"]`).forEach(inp=>{
+   const val=parseFloat(inp.value); if(Number.isFinite(val)&&val>=0){grades[inp.dataset.qid]=val;total+=val;count++}
+ });
+ r.essayGrades=grades;r.essayScore=total;r.gradingStatus=count===r.essayTotal?"تصحیح کامل شده":"تصحیح ناقص";
+ r.gradedAt=nowISO();saveResults(results);renderTeacher();toast("نمره تشریحی ذخیره شد.");
+}
+$("startBtn").addEventListener("click",()=>{
+ const first=$("firstName").value.trim(),last=$("lastName").value.trim(),id=normalizeDigits($("nationalId").value);
+ $("loginError").textContent="";
+ if(!first||!last){$("loginError").textContent="نام و نام خانوادگی را وارد کنید.";return}
+ if(!validNationalId(id)){ $("loginError").textContent="کد ملی باید ۱۰ رقم و معتبر باشد.";return}
+ if(getResults().some(r=>r.student?.nationalId===id)){ $("loginError").textContent="برای این کد ملی قبلاً نتیجه ثبت شده است.";return}
+ createExam();
+});
+$("prevBtn").addEventListener("click",()=>{collectCurrent();if(state.index>0){state.index--;renderQuestion()}});
+$("nextBtn").addEventListener("click",()=>{collectCurrent();if(state.index<state.questions.length-1){state.index++;renderQuestion()}else finishExam(false)});
+$("teacherBtn").addEventListener("click",openTeacher);
+$("passwordSubmit").addEventListener("click",loginTeacher);
+$("passwordCancel").addEventListener("click",()=>$("passwordModal").classList.add("hidden"));
+$("teacherPasswordInput").addEventListener("keydown",e=>{if(e.key==="Enter")loginTeacher()});
+$("teacherLogout").addEventListener("click",showHome);
+$("downloadResultBtn").addEventListener("click",()=>downloadJSON(`result-${state.student.nationalId}.json`,state));
+$("downloadAll").addEventListener("click",()=>downloadJSON("all-results-dezpart.json",getResults()));
+$("importResults").addEventListener("change",async e=>{
+ const files=[...e.target.files]; if(!files.length)return;
+ const results=getResults();let added=0;
+ for(const f of files)try{
+   const data=JSON.parse(await f.text());const items=Array.isArray(data)?data:[data];
+   items.forEach(r=>{if(r?.student?.nationalId){const i=results.findIndex(x=>x.resultId===r.resultId);if(i>=0)results[i]=r;else{results.push(r);added++}}});
+ }catch{}
+ saveResults(results);renderTeacher();e.target.value="";toast(`${faNum(added)} نتیجه وارد شد.`);
+});
+$("nationalId").addEventListener("input",e=>{e.target.value=normalizeDigits(e.target.value).replace(/\D/g,"").slice(0,10)});
+window.addEventListener("beforeunload",()=>{if(state&&!state.finished)saveDraft()});
+
+const draft=loadDraft();
+if(draft){
+ state=draft;
+ if(state.student){$("firstName").value=state.student.firstName||"";$("lastName").value=state.student.lastName||"";$("nationalId").value=state.student.nationalId||""}
+ $("home").classList.add("hidden");$("exam").classList.remove("hidden");renderQuestion();updateTimer();
+ timerHandle=setInterval(updateTimer,1000);
+}
+</script>
+</body>
+</html>
